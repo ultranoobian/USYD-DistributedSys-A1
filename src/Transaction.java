@@ -15,15 +15,23 @@ public class Transaction {
         return String.format("|%s|%70s|\n", sender, content);
     }
 
-    public boolean validateContent(String content) {
+    public static boolean validateContent(String content) {
         return ((content.length() >= 70) && (content.indexOf('|') == -1));
     }
 
-    public boolean validateSender(String sender) {
+    public static boolean validateSender(String sender) {
         Pattern unikeyPattern = Pattern.compile("[a-z]{4}[0-9]{4}");
         Matcher unikeyMatcher = unikeyPattern.matcher(sender);
 
         return unikeyMatcher.matches();
     }
-    // implement helper functions here if you need any
+
+    public boolean validateContent() {
+        return Transaction.validateContent(this.content);
+    }
+
+    public boolean validateSender() {
+        return Transaction.validateSender(this.sender);
+    }
+
 }
