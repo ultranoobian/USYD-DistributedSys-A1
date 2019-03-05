@@ -1,3 +1,5 @@
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -41,6 +43,7 @@ public class Block {
     // to calculate the hash of current block.
     public byte[] calculateHash() {
         // TODO: implement your code here.
+        throw new NotImplementedException();
     }
 
     // implement helper functions here if you need any.
