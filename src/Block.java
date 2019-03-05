@@ -1,5 +1,10 @@
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -42,8 +47,27 @@ public class Block {
 
     // to calculate the hash of current block.
     public byte[] calculateHash() {
-        // TODO: implement your code here.
-        throw new NotImplementedException();
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(baos);
+
+            dos.write(previousHash);
+
+            for(Transaction t : transactions) {
+                dos.writeUTF(t.toString());
+            }
+
+            return digest.digest(baos.toByteArray());
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     // implement helper functions here if you need any.
