@@ -13,25 +13,42 @@ public class Blockchain {
     }
 
     // getters and setters
-    public Block getHead() { return head; }
-    public ArrayList<Transaction> getPool() { return pool; }
-    public int getLength() { return length; }
-    public void setHead(Block head) { this.head = head; }
-    public void setPool(ArrayList<Transaction> pool) { this.pool = pool; }
-    public void setLength(int length) { this.length = length; }
+    public Block getHead() {
+        return head;
+    }
+
+    public ArrayList<Transaction> getPool() {
+        return pool;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setHead(Block head) {
+        this.head = head;
+    }
+
+    public void setPool(ArrayList<Transaction> pool) {
+        this.pool = pool;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
 
     // add a transaction
     public int addTransaction(String txString) {
         Transaction t = new Transaction();
         // Construct transaction object
         String[] st = txString.split("|");
-        if(st[0].equals("tx") && st.length == 3) {
+        if (st[0].equals("tx") && st.length == 3) {
             t.setSender(st[1]);
             t.setContent(st[2]);
         }
 
         //Validate and add transaction
-        if(t.validateSender() && t.validateContent()) {
+        if (t.validateSender() && t.validateContent()) {
             pool.add(t);
 
             // Check if pool limit reached
@@ -39,7 +56,7 @@ public class Blockchain {
                 // Create and add new block
                 Block block = new Block();
 
-                if(head == null) {
+                if (head == null) {
                     block.setPreviousBlock(null);
                     block.setPreviousHash(new byte[32]);
                 } else {

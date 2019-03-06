@@ -13,14 +13,31 @@ public class Block {
     private byte[] previousHash;
     private ArrayList<Transaction> transactions;
 
-    public Block() { transactions = new ArrayList<>(); }
+    public Block() {
+        transactions = new ArrayList<>();
+    }
 
     // getters and setters
-    public Block getPreviousBlock() { return previousBlock; }
-    public byte[] getPreviousHash() { return previousHash; }
-    public ArrayList<Transaction> getTransactions() { return transactions; }
-    public void setPreviousBlock(Block previousBlock) { this.previousBlock = previousBlock; }
-    public void setPreviousHash(byte[] previousHash) { this.previousHash = previousHash; }
+    public Block getPreviousBlock() {
+        return previousBlock;
+    }
+
+    public byte[] getPreviousHash() {
+        return previousHash;
+    }
+
+    public ArrayList<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setPreviousBlock(Block previousBlock) {
+        this.previousBlock = previousBlock;
+    }
+
+    public void setPreviousHash(byte[] previousHash) {
+        this.previousHash = previousHash;
+    }
+
     public void setTransactions(ArrayList<Transaction> transactions) {
         this.transactions = transactions;
     }
@@ -55,7 +72,7 @@ public class Block {
 
             dos.write(previousHash);
 
-            for(Transaction t : transactions) {
+            for (Transaction t : transactions) {
                 dos.writeUTF(t.toString());
             }
 
