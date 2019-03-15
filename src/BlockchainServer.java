@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.regex.Pattern;
@@ -55,7 +56,7 @@ public class BlockchainServer {
         try {
             ServerSocket sc = new ServerSocket(portNumber);
             while (true) {
-                handleSocketAcceptation(sc.accept());
+                handleSocketAcceptation(sc.accept(), bcs.getBlockchain());
             }
 
         } catch (IOException e) {
@@ -63,8 +64,9 @@ public class BlockchainServer {
         }
     }
 
-    private static void handleSocketAcceptation(Socket sck) throws IOException {
+    private static void handleSocketAcceptation(Socket sck, Blockchain blockchain) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(sck.getInputStream()));
+        PrintWriter printWriter = new PrintWriter(sck.getOutputStream());
         try{
             String line;
             boolean exitSignalReceived = false;
@@ -77,15 +79,27 @@ public class BlockchainServer {
                         switch (lineComponents[0]) {
                             case "tx":
                                 // Add transaction (if valid).
+                                switch(blockchain.addTransaction(line)) {
+                                    case 0: //Failure
+                                        printWriter.print("Rejected\n\n");
+                                    case 1: // Success
+                                    case 2: // Success and new block formed
+                                        printWriter.print("Accepted\n\n");
+                                    default:
+                                        break;
+                                }
+
                                 break;
                             case "pb":
                                 // Print current blockchain.
+                                printWriter.print(blockchain.toString());
                                 break;
                             case "cc":
                                 // Close connection
                                 exitSignalReceived = true;
                                 break;
                             default:
+                                printWriter.print("Error\n\n");
                                 break;
                         }
                     }
@@ -94,6 +108,7 @@ public class BlockchainServer {
         }
         finally {
             bufferedReader.close();
+            printWriter.close();
             sck.close();
         }
 
