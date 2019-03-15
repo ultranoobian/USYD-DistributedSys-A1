@@ -12,6 +12,8 @@ public class Block {
     private ArrayList<Transaction> transactions;
 
     public Block() {
+        previousHash = new byte[32];
+        previousBlock = null;
         transactions = new ArrayList<>();
     }
 
@@ -71,7 +73,7 @@ public class Block {
             dos.write(previousHash);
 
             for (Transaction t : transactions) {
-                dos.writeUTF(t.toString());
+                dos.writeUTF(t.toHashString());
             }
 
             return digest.digest(baos.toByteArray());

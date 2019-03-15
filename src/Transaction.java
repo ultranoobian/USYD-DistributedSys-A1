@@ -26,6 +26,10 @@ public class Transaction {
         return String.format("|%s|%70s|\n", sender, content);
     }
 
+    public String toHashString() {
+        return String.format("tx|%s|%s", this.getSender(), this.getContent());
+    }
+
     public static boolean validateContent(String content) {
         return ((content.length() >= 70) && (content.indexOf('|') == -1));
     }
