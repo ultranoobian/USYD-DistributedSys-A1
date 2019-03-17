@@ -6,8 +6,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.regex.Pattern;
 
-import static com.sun.corba.se.impl.util.Utility.printStackTrace;
-
 
 public class BlockchainServer {
     private static boolean FLAG_DEBUG = false;
@@ -45,7 +43,6 @@ public class BlockchainServer {
             try {
                 FLAG_DEBUG = Boolean.parseBoolean(args[1]);
             } catch (ArrayIndexOutOfBoundsException outOfBounds) {
-                printStackTrace();
                 System.err.println(outOfBounds);
             }
         }
