@@ -105,7 +105,7 @@ public class BlockchainServer {
                                 break;
                             case "pb":
                                 // Print current blockchain.
-                                outWriter.print(blockchain.toString());
+                                outWriter.print(blockchain.toString() + "\n");
                                 outWriter.flush();
                                 break;
                             case "cc":
