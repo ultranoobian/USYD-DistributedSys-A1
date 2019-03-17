@@ -47,11 +47,16 @@ public class BlockchainServer {
         BlockchainServer bcs = new BlockchainServer();
         if (FLAG_DEBUG) System.out.println(String.format("Attempting to start server with port %s", portNumber));
 
+        ServerSocket sc;
+        Socket sck;
         try {
-            ServerSocket sc = new ServerSocket(portNumber);
+            sc = new ServerSocket(portNumber);
             if (FLAG_DEBUG && sc.isBound()) System.out.println(String.format("Socket bound with port %s", portNumber));
             while (true) {
-                handleSocketAcceptation(sc.accept(), bcs.getBlockchain());
+                if (FLAG_DEBUG) System.out.println("Waiting on Connection...");
+                sck = sc.accept();
+                if (FLAG_DEBUG) System.out.println("Client connected.");
+                bcs.serverHandler(sck.getInputStream(), sck.getOutputStream());
             }
 
         } catch (IOException e) {
@@ -59,24 +64,18 @@ public class BlockchainServer {
         }
     }
 
-    public void serverHandler(InputStream clientInputStream, OutputStream clientOutputStream) {
+    public void serverHandler(InputStream clientInputStream, OutputStream clientOutputStream) throws IOException{
 
         BufferedReader inputReader = new BufferedReader(
                 new InputStreamReader(clientInputStream));
-        PrintWriter outWriter = new PrintWriter(clientOutputStream, true);
+        PrintWriter outWriter = new PrintWriter(clientOutputStream, false);
 
-        // TODO: implement your code here.
-
-    }
-    private static void handleSocketAcceptation(Socket sck, Blockchain blockchain) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(sck.getInputStream()));
-        PrintWriter printWriter = new PrintWriter(sck.getOutputStream());
         try{
             String line;
             boolean exitSignalReceived = false;
 
             while (!exitSignalReceived) {
-                if ((line = bufferedReader.readLine()) != null) {
+                if ((line = inputReader.readLine()) != null) {
                     // Do stuff when there is data
                     String[] lineComponents = line.split(Pattern.quote("|"));
                     if (lineComponents.length >= 1) {
@@ -85,10 +84,20 @@ public class BlockchainServer {
                                 // Add transaction (if valid).
                                 switch(blockchain.addTransaction(line)) {
                                     case 0: //Failure
-                                        printWriter.print("Rejected\n\n");
+                                        if (FLAG_DEBUG) System.out.println(String.format("Unsuccessful TX: %s", line));
+                                        outWriter.print("Rejected\n\n");
+                                        outWriter.flush();
+                                        break;
                                     case 1: // Success
+                                        if (FLAG_DEBUG) System.out.println("Successful TX");
+                                        outWriter.print("Accepted\n\n");
+                                        outWriter.flush();
+                                        break;
                                     case 2: // Success and new block formed
-                                        printWriter.print("Accepted\n\n");
+                                        if (FLAG_DEBUG) System.out.println("New block forged");
+                                        outWriter.print("Accepted\n\n");
+                                        outWriter.flush();
+                                        break;
                                     default:
                                         break;
                                 }
@@ -96,28 +105,32 @@ public class BlockchainServer {
                                 break;
                             case "pb":
                                 // Print current blockchain.
-                                printWriter.print(blockchain.toString());
+                                outWriter.print(blockchain.toString());
+                                outWriter.flush();
                                 break;
                             case "cc":
                                 // Close connection
+                                if (FLAG_DEBUG) System.out.println("Client closed connection");
                                 exitSignalReceived = true;
                                 break;
                             default:
-                                printWriter.print("Error\n\n");
+                                if (FLAG_DEBUG) System.out.println(String.format("Unknown Command %s", line));
+                                outWriter.print("Error\n\n");
+                                outWriter.flush();
                                 break;
                         }
                     }
+                } else {
+                    if (FLAG_DEBUG) System.out.println("Null received");
+                    break;
                 }
             }
         }
         finally {
-            bufferedReader.close();
-            printWriter.close();
-            sck.close();
+            inputReader.close();
+            outWriter.close();
         }
 
-
     }
-
     // implement helper functions here if you need any.
 }
