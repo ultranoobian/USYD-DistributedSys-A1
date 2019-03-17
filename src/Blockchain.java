@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class Blockchain {
     private Block head = null;
@@ -41,7 +42,7 @@ public class Blockchain {
     public int addTransaction(String txString) {
         Transaction t = new Transaction();
         // Construct transaction object
-        String[] st = txString.split("|");
+        String[] st = txString.split(Pattern.quote("|"));
         if (st[0].equals("tx") && st.length == 3) {
             t.setSender(st[1]);
             t.setContent(st[2]);
