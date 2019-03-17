@@ -99,4 +99,56 @@ public class BlockchainTest {
         assertEquals(2, mainChain.getLength());
     }
 
+    @Test
+    public void BlockChaintoStringTest() {
+        assertNotNull(mainChain);
+        assertNull(mainChain.getHead());
+        assertNotNull(mainChain.getPool());
+
+        ArrayList<Transaction> pool = mainChain.getPool();
+
+        mainChain.addTransaction("tx|test0000|1");
+        mainChain.addTransaction("tx|test0000|2");
+        mainChain.addTransaction("tx|test0000|3");
+        assertNotSame(mainChain.getPool(), pool);
+        pool = mainChain.getPool();
+        mainChain.addTransaction("tx|test0000|4");
+        mainChain.addTransaction("tx|test0000|5");
+        mainChain.addTransaction("tx|test0000|6");
+        assertNotSame(mainChain.getPool(), pool);
+
+        assertEquals("Lakir/jIQFUGnf+UUnRbiuYsNDOcGXekM+2cKXVmyRw=", Base64.getEncoder().encodeToString(mainChain.getHead().calculateHash()));
+        assertEquals(0, mainChain.getPool().size());
+        assertEquals(2, mainChain.getLength());
+
+        String pb = "Pool:\n" +
+                "---------------------------------------------------------------------------------\n" +
+                "---------------------------------------------------------------------------------\n" +
+                "Block:\n" +
+                "---------------------------------------------------------------------------------\n" +
+                "|CurrentHash:|                      Lakir/jIQFUGnf+UUnRbiuYsNDOcGXekM+2cKXVmyRw=|\n" +
+                "---------------------------------------------------------------------------------\n" +
+                "|test0000|                                                                     4|\n" +
+                "|test0000|                                                                     5|\n" +
+                "|test0000|                                                                     6|\n" +
+                "---------------------------------------------------------------------------------\n" +
+                "|PreviousHash:|                     jWuaYc5TOawKJew+B+tYuLZT0NDsTo6NDKEJdmgJyBk=|\n" +
+                "---------------------------------------------------------------------------------\n" +
+                "Block:\n" +
+                "---------------------------------------------------------------------------------\n" +
+                "|CurrentHash:|                      jWuaYc5TOawKJew+B+tYuLZT0NDsTo6NDKEJdmgJyBk=|\n" +
+                "---------------------------------------------------------------------------------\n" +
+                "|test0000|                                                                     1|\n" +
+                "|test0000|                                                                     2|\n" +
+                "|test0000|                                                                     3|\n" +
+                "---------------------------------------------------------------------------------\n" +
+                "|PreviousHash:|                     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=|\n" +
+                "---------------------------------------------------------------------------------\n";
+        assertEquals(pb, mainChain.toString());
+    }
+
+    @Test
+    public void rejectTransactionTest() {
+        assertEquals(0, mainChain.addTransaction("tx|wrong|wrong"));
+    }
 }
