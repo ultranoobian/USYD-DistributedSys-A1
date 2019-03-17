@@ -38,6 +38,10 @@ public class Blockchain {
         this.length = length;
     }
 
+    /**
+     * @param txString
+     * @return integer: 0 - invalid transaction, 1 - successful transaction, 2 - successful transaction (new block)
+     */
     // add a transaction
     public int addTransaction(String txString) {
         Transaction t = new Transaction();
@@ -46,6 +50,9 @@ public class Blockchain {
         if (st[0].equals("tx") && st.length == 3) {
             t.setSender(st[1]);
             t.setContent(st[2]);
+        } else {
+            // Pattern and/or length are not followed
+            return 0;
         }
 
         //Validate and add transaction
