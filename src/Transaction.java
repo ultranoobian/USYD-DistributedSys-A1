@@ -31,7 +31,7 @@ public class Transaction {
     }
 
     public static boolean validateContent(String content) {
-        return ((content.length() >= 70) && (content.indexOf('|') == -1));
+        return ((content.length() <= 70) && (content.indexOf('|') == -1));
     }
 
     public static boolean validateSender(String sender) {
