@@ -52,6 +52,7 @@ public class BlockchainServer {
 
         try {
             ServerSocket sc = new ServerSocket(portNumber);
+            if (FLAG_DEBUG && sc.isBound()) System.out.println(String.format("Socket bound with port %s", portNumber));
             while (true) {
                 handleSocketAcceptation(sc.accept(), bcs.getBlockchain());
             }
