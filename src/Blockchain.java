@@ -75,6 +75,7 @@ public class Blockchain {
 
                 this.setHead(block);
                 this.setLength(this.getLength() + 1);
+                this.setPool(new ArrayList<Transaction>());
                 return 2;
             }
         } else {
