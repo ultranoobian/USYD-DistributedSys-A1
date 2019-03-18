@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.regex.Pattern;
 
 
@@ -70,7 +71,7 @@ public class BlockchainServer {
                 new InputStreamReader(clientInputStream));
         PrintWriter outWriter = new PrintWriter(clientOutputStream, false);
 
-        try{
+        try {
             String line;
             boolean exitSignalReceived = false;
 
@@ -82,7 +83,7 @@ public class BlockchainServer {
                         switch (lineComponents[0]) {
                             case "tx":
                                 // Add transaction (if valid).
-                                switch(blockchain.addTransaction(line)) {
+                                switch (blockchain.addTransaction(line)) {
                                     case 0: //Failure
                                         if (FLAG_DEBUG) System.out.println(String.format("Unsuccessful TX: %s", line));
                                         outWriter.print("Rejected\n\n");
@@ -125,6 +126,9 @@ public class BlockchainServer {
                     break;
                 }
             }
+        }
+        catch(SocketException se){
+            System.err.println("Socket Exception: Connection was reset.");
         }
         finally {
             inputReader.close();
